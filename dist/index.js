@@ -12,26 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = __importDefault(require("./app"));
+exports.config = void 0;
+const serverless_http_1 = __importDefault(require("serverless-http"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const app_1 = __importDefault(require("../app"));
 const dotenv_1 = __importDefault(require("dotenv"));
-// Load env vars
 dotenv_1.default.config();
-let server;
-const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI;
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield mongoose_1.default.connect(MONGODB_URI);
-            console.log("Mongoose connected");
-            server = app_1.default.listen(PORT, () => {
-                console.log(`App is running on port ${PORT}`);
-            });
-        }
-        catch (error) {
-            console.log("Database connection failed:", error);
-        }
-    });
-}
-main();
+let conn;
+const handler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!conn) {
+        conn = mongoose_1.default.connect(process.env.MONGODB_URI);
+        yield conn;
+        console.log("Connected to MongoDB (serverless)");
+    }
+    const handlerFn = (0, serverless_http_1.default)(app_1.default);
+    return handlerFn(req, res);
+});
+exports.default = handler;
+exports.config = {
+    api: {
+        bodyParser: false,
+    },
+};
