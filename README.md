@@ -33,7 +33,7 @@ Build a backend system for managing books and borrow records with:
 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/library-management-api.git
+git clone https://github.com/devsamim/Library-Management-API.git
 cd library-management-api
 ```
 
